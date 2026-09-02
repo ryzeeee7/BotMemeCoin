@@ -24,15 +24,15 @@ REQUISITI:
 CONFIGURAZIONE:
 Imposta due variabili d'ambiente prima di avviare lo script (altrimenti
 gli alert vengono solo stampati a schermo, non inviati su Telegram):
-  TELEGRAM_BOT_TOKEN   -> token del bot, ottenuto da @BotFather su Telegram
-  TELEGRAM_CHAT_ID     -> id della chat/canale a cui inviare gli alert
+  TELEGRAM_BOT_TOKEN   -> 8739105067:AAEtSroB8vhC3t_Gpay-9CxNdfshnM_rL30
+  TELEGRAM_CHAT_ID     -> 847172274,928004300
 
   macOS / Linux:
-    export TELEGRAM_BOT_TOKEN="123456:ABC..."
-    export TELEGRAM_CHAT_ID="123456789"
+    export TELEGRAM_BOT_TOKEN= 8739105067:AAEtSroB8vhC3t_Gpay-9CxNdfshnM_rL30
+    export TELEGRAM_CHAT_ID= 847172274,928004300
   Windows (PowerShell):
-    $env:TELEGRAM_BOT_TOKEN="123456:ABC..."
-    $env:TELEGRAM_CHAT_ID="123456789"
+    $env:TELEGRAM_BOT_TOKEN= 8739105067:AAEtSroB8vhC3t_Gpay-9CxNdfshnM_rL30
+    $env:TELEGRAM_CHAT_ID= 847172274,928004300
 
 USO:
   python memecoin_alert_bot.py
