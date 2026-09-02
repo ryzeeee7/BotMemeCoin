@@ -1,0 +1,50 @@
+# Percorso richiesto nel repository: .github/workflows/scan.yml
+#
+# Cosa fa: esegue memecoin_alert_bot.py --once ogni 15 minuti sui server
+# gratuiti di GitHub, e salva lo stato (seen_tokens.json) facendo un commit
+# automatico al termine di ogni esecuzione, cosi' il bot "ricorda" quali
+# token ha gia' segnalato anche se ogni run parte da una macchina nuova.
+#
+# Nota sui tempi: GitHub non garantisce l'orario esatto delle esecuzioni
+# schedulate - possono esserci ritardi di qualche minuto nei momenti di
+# carico alto (specialmente in cima all'ora). Per questo l'orario qui sotto
+# e' impostato leggermente decentrato (":07", ":22", ecc. invece di ":00").
+
+name: Memecoin Alert Scanner
+
+on:
+  schedule:
+    - cron: '7,22,37,52 * * * *'   # ogni 15 minuti, decentrato dall'ora esatta
+  workflow_dispatch: {}             # bottone "Run workflow" per lanciarlo a mano
+
+permissions:
+  contents: write   # necessario per poter salvare seen_tokens.json nel repo
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Installa le dipendenze
+        run: pip install requests
+
+      - name: Esegui lo scanner (una singola passata)
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python memecoin_alert_bot.py --once --min-liquidity 5000 --score-threshold 8.0
+
+      - name: Salva lo stato aggiornato (seen_tokens.json)
+        run: |
+          git config user.name "memecoin-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add seen_tokens.json
+          git diff --staged --quiet || git commit -m "Aggiorna stato token visti [skip ci]"
+          git push
